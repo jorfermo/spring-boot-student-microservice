@@ -3,6 +3,8 @@ package com.jorfermo.studentmicroservice.student;
 import java.util.List;
 import java.util.Optional;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,5 +35,18 @@ public class StudentService {
         if (!exists)
             throw new IllegalStateException("Student with id " + studentId + " not found");
         studentRepository.deleteById(studentId);
+    }
+
+    @Transactional
+    public void updateStudent(Long studentId, String name, String email) {
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new IllegalStateException("Student with id " + studentId + " not found"));
+        if (name != null && !name.isEmpty() && !name.equals(student.getName())) {
+            student.setName(name);
+        }
+        if (email != null && !email.isEmpty() && !email.equals(student.getEmail())) {
+            student.setEmail(email);
+        }
+
     }
 }
